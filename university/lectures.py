@@ -1,30 +1,27 @@
 #!/usr/bin/python3
 
 import locale
-import os
 import re
 import subprocess
 from datetime import datetime
-from pathlib import Path
 
-from config import CURRENT_COURSE_ROOT, DATE_FORMAT, get_week
+from .config import DATE_FORMAT, get_week
 
-# TODO
-locale.setlocale(locale.LC_TIME, "nl_BE.utf8")
+locale.setlocale(locale.LC_TIME, "fr_BE.utf8")
 
 
-def number2filename(n):
-    return "lec_{0:02d}.tex".format(n)
+def number_to_filename(number):
+    return "lec_{0:02d}.tex".format(number)
 
 
-def filename2number(s):
-    return int(str(s).replace(".tex", "").replace("lec_", ""))
+def filename_to_number(filename):
+    return int(str(filename).replace(".tex", "").replace("lec_", ""))
 
 
 class Lecture:
     def __init__(self, file_path, course):
-        with file_path.open() as f:
-            for line in f:
+        with file_path.open() as file_io:
+            for line in file_io:
                 lecture_match = re.search(r"lecture\{(.*?)\}\{(.*?)\}\{(.*)\}", line)
                 if lecture_match:
                     break
@@ -40,7 +37,7 @@ class Lecture:
         self.file_path = file_path
         self.date = date
         self.week = week
-        self.number = filename2number(file_path.stem)
+        self.number = filename_to_number(file_path.stem)
         self.title = title
         self.course = course
 
@@ -77,10 +74,11 @@ class Lectures(list):
 
         if string.isdigit():
             return int(string)
-        elif string == "last":
+        if string == "last":
             return self[-1].number
-        elif string == "prev":
+        if string == "prev":
             return self[-1].number - 1
+        return 0
 
     def parse_range_string(self, arg):
         all_numbers = [lecture.number for lecture in self]
@@ -98,8 +96,8 @@ class Lectures(list):
         part = 0
         header = ""
         footer = ""
-        with filepath.open() as f:
-            for line in f:
+        with filepath.open() as file_io:
+            for line in file_io:
                 # order of if-statements is important here!
                 if "end lectures" in line:
                     part = 2
@@ -116,7 +114,7 @@ class Lectures(list):
     def update_lectures_in_master(self, r):
         header, footer = self.get_header_footer(self.master_file)
         body = "".join(
-            " " * 4 + r"\input{" + number2filename(number) + "}\n" for number in r
+            " " * 4 + r"\input{" + number_to_filename(number) + "}\n" for number in r
         )
         self.master_file.write_text(header + body + footer)
 
@@ -126,7 +124,7 @@ class Lectures(list):
         else:
             new_lecture_number = 1
 
-        new_lecture_path = self.root / number2filename(new_lecture_number)
+        new_lecture_path = self.root / number_to_filename(new_lecture_number)
 
         today = datetime.today()
         date = today.strftime(DATE_FORMAT)
@@ -143,9 +141,9 @@ class Lectures(list):
 
         self.read_files()
 
-        l = Lecture(new_lecture_path, self.course)
+        lecture = Lecture(new_lecture_path, self.course)
 
-        return l
+        return lecture
 
     def compile_master(self):
         result = subprocess.run(

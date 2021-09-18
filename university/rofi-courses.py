@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-from courses import Courses
-from rofi import rofi
+from .courses import Courses
+from .rofi import rofi
 
 courses = Courses()
 current = courses.current

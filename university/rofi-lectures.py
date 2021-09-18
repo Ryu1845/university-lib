@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-from courses import Courses
-from rofi import rofi
-from utils import MAX_LEN, generate_short_title
+from .courses import Courses
+from .rofi import rofi
+from .utils import MAX_LEN, generate_short_title
 
 lectures = Courses().current.lectures
 
