@@ -2,8 +2,12 @@
 from pathlib import Path
 
 import yaml
-from config import (CURRENT_COURSE_ROOT, CURRENT_COURSE_SYMLINK,
-                    CURRENT_COURSE_WATCH_FILE, ROOT)
+from config import (
+    CURRENT_COURSE_ROOT,
+    CURRENT_COURSE_SYMLINK,
+    CURRENT_COURSE_WATCH_FILE,
+    ROOT,
+)
 from lectures import Lectures
 
 
