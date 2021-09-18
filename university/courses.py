@@ -1,16 +1,18 @@
 #!/usr/bin/python3
 from pathlib import Path
+
 import yaml
-
+from config import (CURRENT_COURSE_ROOT, CURRENT_COURSE_SYMLINK,
+                    CURRENT_COURSE_WATCH_FILE, ROOT)
 from lectures import Lectures
-from config import ROOT, CURRENT_COURSE_ROOT, CURRENT_COURSE_SYMLINK, CURRENT_COURSE_WATCH_FILE
 
-class Course():
+
+class Course:
     def __init__(self, path):
         self.path = path
         self.name = path.stem
 
-        self.info = yaml.load((path / 'info.yaml').open())
+        self.info = yaml.load((path / "info.yaml").open())
         self._lectures = None
 
     @property
@@ -23,6 +25,7 @@ class Course():
         if other == None:
             return False
         return self.path == other.path
+
 
 class Courses(list):
     def __init__(self):
@@ -41,4 +44,4 @@ class Courses(list):
     def current(self, course):
         CURRENT_COURSE_SYMLINK.unlink()
         CURRENT_COURSE_SYMLINK.symlink_to(course.path)
-        CURRENT_COURSE_WATCH_FILE.write_text('{}\n'.format(course.info['short']))
+        CURRENT_COURSE_WATCH_FILE.write_text("{}\n".format(course.info["short"]))

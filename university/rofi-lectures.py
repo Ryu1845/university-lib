@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 from courses import Courses
 from rofi import rofi
-from utils import generate_short_title, MAX_LEN
+from utils import MAX_LEN, generate_short_title
 
 lectures = Courses().current.lectures
 
@@ -12,18 +12,17 @@ options = [
         fill=MAX_LEN,
         number=lecture.number,
         title=generate_short_title(lecture.title),
-        date=lecture.date.strftime('%a %d %b'),
-        week=lecture.week
+        date=lecture.date.strftime("%a %d %b"),
+        week=lecture.week,
     )
     for lecture in sorted_lectures
 ]
 
-key, index, selected = rofi('Select lecture', options, [
-    '-lines', 5,
-    '-markup-rows',
-    '-kb-row-down', 'Down',
-    '-kb-custom-1', 'Ctrl+n'
-])
+key, index, selected = rofi(
+    "Select lecture",
+    options,
+    ["-lines", 5, "-markup-rows", "-kb-row-down", "Down", "-kb-custom-1", "Ctrl+n"],
+)
 
 if key == 0:
     sorted_lectures[index].edit()
